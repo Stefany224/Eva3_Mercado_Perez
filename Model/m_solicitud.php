@@ -1,6 +1,6 @@
 <?php
 
-require_once '/../config/conexion.php';
+require_once __DIR__ . '/../config/conexion.php';
 
 class modeloSolicitud {
 
@@ -36,7 +36,7 @@ class modeloSolicitud {
     public function getComentario() { return $this->comentario; }
     public function setComentario($value) { $this->comentario = $value; }
 
-    //  funcion GET ALL para obtener todas las solicitudes con datos de empresa y codigo ciego del CV
+    // Funcion GET ALL para obtener todas las solicitudes con datos de empresa y codigo ciego del CV
     public function getAll() {
         $lista = [];
         $con = new conexion();
@@ -63,12 +63,14 @@ class modeloSolicitud {
         return $lista;
     }
 
-    // funcion GET BY ID para obtener solicitud por id e incluye notas de seguimiento asociadas
+    // Funcion GET BY ID para obtener solicitud por id e incluye notas de seguimiento asociadas
     public function getById(modeloSolicitud $_solicitud) {
         $con = new conexion();
         $conn = $con->getConection();
 
-        // Obtenemos la solicitud
+        // Obtenemos la solicitud asegurando el casteo a entero
+        $id_solicitud = (int)$_solicitud->getId_solicitud();
+        
         $query = "SELECT 
                     s.id_solicitud, s.rut_empresa, s.id_cv,
                     s.fecha_solicitud, s.id_estado_proceso,
@@ -79,7 +81,7 @@ class modeloSolicitud {
                   INNER JOIN empresas e ON s.rut_empresa = e.rut_empresa
                   INNER JOIN cv_perfil cv ON s.id_cv = cv.id_cv
                   INNER JOIN estados es ON s.id_estado_proceso = es.id_estado
-                  WHERE s.id_solicitud = " . $_solicitud->getId_solicitud();
+                  WHERE s.id_solicitud = " . $id_solicitud;
 
         $rs = mysqli_query($conn, $query);
         $resultado = null;
@@ -90,7 +92,7 @@ class modeloSolicitud {
             // Obtenemos las notas asociadas a esta solicitud
             $query_notas = "SELECT id_nota, autor_rol, comentario, fecha_nota
                             FROM notas_seguimiento
-                            WHERE id_solicitud = " . $_solicitud->getId_solicitud();
+                            WHERE id_solicitud = " . $id_solicitud;
 
             $rs_notas = mysqli_query($conn, $query_notas);
             $notas = [];
@@ -110,7 +112,7 @@ class modeloSolicitud {
         return $resultado;
     }
 
-    // funcion ADD para crear nueva solicitud de contacto, su estado inicial: 4 (Contactado)
+    // Funcion ADD para crear nueva solicitud de contacto, su estado inicial: 4 (Contactado)
     public function add(modeloSolicitud $_nuevo)
     {
         $con = new conexion();
@@ -119,7 +121,7 @@ class modeloSolicitud {
         $query = "INSERT INTO solicitudes_contacto (rut_empresa, id_cv, id_estado_proceso)
                   VALUES (
                       '" . mysqli_real_escape_string($conn, $_nuevo->getRut_empresa()) . "',
-                      " . $_nuevo->getId_cv() . ",  4 )";
+                      " . (int)$_nuevo->getId_cv() . ",  4 )";
 
         $rs = mysqli_query($conn, $query);
         $con->closeConnection();
@@ -127,16 +129,14 @@ class modeloSolicitud {
         return $rs ? true : false;
     }
 
-    // funcion PATCH para actualizar estado del proceso
-    // Estados: 4= Contactado, 5=Entrevista, 
-    //          6=Seleccionado, 7=No seleccionado
+    // Funcion PATCH para actualizar estado del proceso
     public function patch(modeloSolicitud $_nuevo) {
         $con = new conexion();
         $conn = $con->getConection();
 
         $query = "UPDATE solicitudes_contacto SET
-                    id_estado_proceso = " . $_nuevo->getId_estado_proceso() . "
-                  WHERE id_solicitud = " . $_nuevo->getId_solicitud();
+                    id_estado_proceso = " . (int)$_nuevo->getId_estado_proceso() . "
+                  WHERE id_solicitud = " . (int)$_nuevo->getId_solicitud();
 
         $rs = mysqli_query($conn, $query);
         $con->closeConnection();
@@ -144,14 +144,14 @@ class modeloSolicitud {
         return $rs ? true : false;
     }
 
-    // funcion ADD NOTA para agregar una nota de seguimiento
+    // Funcion ADD NOTA para agregar una nota de seguimiento
     public function addNota(modeloSolicitud $_nuevo) {
         $con = new conexion();
         $conn = $con->getConection();
 
         $query = "INSERT INTO notas_seguimiento (id_solicitud, autor_rol, comentario)
                   VALUES (
-                      " . $_nuevo->getId_solicitud() . ",
+                      " . (int)$_nuevo->getId_solicitud() . ",
                       '" . mysqli_real_escape_string($conn, $_nuevo->getAutor_rol()) . "',
                       '" . mysqli_real_escape_string($conn, $_nuevo->getComentario()) . "'
                   )";
@@ -162,11 +162,11 @@ class modeloSolicitud {
         return $rs ? true : false;
     }
 
-    // funcion DELETE NOTA para eliminar nota de seguimiento
+    // Funcion DELETE NOTA para eliminar nota de seguimiento
     public function deleteNota(modeloSolicitud $_nuevo) {
         $con = new conexion();
         $query = "DELETE FROM notas_seguimiento
-                  WHERE id_nota = " . $_nuevo->getId_nota();
+                  WHERE id_nota = " . (int)$_nuevo->getId_nota();
 
         $rs = mysqli_query($con->getConection(), $query);
         $con->closeConnection();
@@ -174,11 +174,11 @@ class modeloSolicitud {
         return $rs ? true : false;
     }
 
-    // funcion DELETE para eliminar solicitud en CASCADE y eliminar notas asociadas
+    // Funcion DELETE para eliminar solicitud
     public function delete(modeloSolicitud $_nuevo) {
         $con = new conexion();
         $query = "DELETE FROM solicitudes_contacto
-                  WHERE id_solicitud = " . $_nuevo->getId_solicitud();
+                  WHERE id_solicitud = " . (int)$_nuevo->getId_solicitud();
 
         $rs = mysqli_query($con->getConection(), $query);
         $con->closeConnection();

@@ -1,17 +1,14 @@
 <?php
-// =============================================
-// CONTROLLER EMPRESA - ProviEmplea
-// =============================================
 
 require_once __DIR__ . '/../config/headers.php';
-require_once '/../config/conexion.php';
-require_once '/../Model/m_empresa.php';
+require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../Model/m_empresa.php';
 
 switch ($_method) {
 
     // metodo GET para obtener todas las empresas / una por rut
     case 'GET':
-        if ($_authorization === 'Bearer proviemplea.get') {
+        if ($_authorization === 'proviemplea.get') {
             $modelo = new modeloEmpresa();
 
             if (isset($_GET['rut_empresa'])) {
@@ -38,7 +35,7 @@ switch ($_method) {
 
     // metodo POST para crear nueva empresa
     case 'POST':
-        if ($_authorization === 'Bearer proviemplea.post') {
+        if ($_authorization === 'proviemplea.post') {
             $body = json_decode(file_get_contents("php://input"), true);
 
             // Validacion de campos requeridos
@@ -83,7 +80,7 @@ switch ($_method) {
 
     // metodo PUT para actualizar datos completos de empresa
     case 'PUT':
-        if ($_authorization === 'Bearer proviemplea.put') {
+        if ($_authorization === 'proviemplea.put') {
             $body = json_decode(file_get_contents("php://input"), true);
 
             // Validacion de campos requeridos
@@ -126,7 +123,7 @@ switch ($_method) {
 
     // metodo PATCH para actualizar solo presentacion
     case 'PATCH':
-        if ($_authorization === 'Bearer proviemplea.patch') {
+        if ($_authorization === 'proviemplea.patch') {
             $body = json_decode(file_get_contents("php://input"), true);
 
             if (empty($body['rut_empresa']) || empty($body['presentacion'])) {
@@ -156,7 +153,7 @@ switch ($_method) {
 
     // metodo DELETE para eliminar empresas
     case 'DELETE':
-        if ($_authorization === 'Bearer proviemplea.delete') {
+        if ($_authorization === 'proviemplea.delete') {
             $body = json_decode(file_get_contents("php://input"), true);
 
             if (empty($body['rut_empresa'])) {

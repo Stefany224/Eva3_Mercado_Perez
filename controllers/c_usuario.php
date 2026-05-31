@@ -1,17 +1,16 @@
 <?php
-
 require_once __DIR__ . '/../config/headers.php';
-require_once  '/../config/conexion.php';
-require_once  '/../Model/m_usuario.php';
+require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../Model/m_usuario.php';
 
 switch ($_method) {
 
-    // metodo GET para obtener todos los usuarios por id
+    // metodo GET para obtener todos los usuarios o por id
     case 'GET':
-        if ($_authorization === 'Bearer proviemplea.get') {
+
+        if ($_authorization === 'proviemplea.get') { 
             $modelo = new modeloUsuario();
 
-            // Si viene id_usuario como query param, retorna uno solo
             if (isset($_GET['id_usuario'])) {
                 $modelo->setId_usuario($_GET['id_usuario']);
                 $resultado = $modelo->getById($modelo);
@@ -36,10 +35,9 @@ switch ($_method) {
 
     // metodo POST para crear un nuevo usuario
     case 'POST':
-        if ($_authorization === 'Bearer proviemplea.post') {
+        if ($_authorization === 'proviemplea.post') { // <-- TOKEN LIMPIO
             $body = json_decode(file_get_contents("php://input"), true);
 
-            // Validacion de campos requeridos
             if (
                 empty($body['rut']) ||
                 empty($body['correo']) ||
@@ -51,7 +49,7 @@ switch ($_method) {
             ) {
                 http_response_code(400);
                 echo json_encode(['type' => 'error', 'msg' => 'Faltan campos requeridos']);
-                break;
+                break; 
             }
 
             $modelo = new modeloUsuario();
@@ -82,10 +80,9 @@ switch ($_method) {
 
     // metodo PUT para actualizar datos personales del usuario
     case 'PUT':
-        if ($_authorization === 'Bearer proviemplea.put') {
+        if ($_authorization === 'proviemplea.put') { // <-- TOKEN LIMPIO
             $body = json_decode(file_get_contents("php://input"), true);
 
-            // Validacion de campos requeridos
             if (
                 empty($body['id_usuario']) ||
                 empty($body['nombre']) ||
@@ -122,7 +119,7 @@ switch ($_method) {
 
     // metodo PATCH para cambiar el estado del usuario
     case 'PATCH':
-        if ($_authorization === 'Bearer proviemplea.patch') {
+        if ($_authorization === 'proviemplea.patch') { // <-- TOKEN LIMPIO
             $body = json_decode(file_get_contents("php://input"), true);
 
             if (empty($body['id_usuario']) || empty($body['id_estado'])) {
@@ -152,7 +149,7 @@ switch ($_method) {
 
     // metodo DELETE para eliminar usuario
     case 'DELETE':
-        if ($_authorization === 'Bearer proviemplea.delete') {
+        if ($_authorization === 'proviemplea.delete') { // <-- TOKEN LIMPIO
             $body = json_decode(file_get_contents("php://input"), true);
 
             if (empty($body['id_usuario'])) {

@@ -1,6 +1,6 @@
 <?php
 
-require_once '/../config/conexion.php';
+require_once __DIR__ . '/../config/conexion.php';
 
 class modeloCvPerfil {
    
@@ -51,8 +51,7 @@ class modeloCvPerfil {
         $query = "SELECT 
                     cv.id_cv, cv.codigo_ciego, cv.resumen_laboral,
                     cv.nivel_educacional, cv.carrera,
-                    cv.renta_deseada, cv.jornada_deseada, cv.modalidad_deseada,
-                    u.porcentaje_avance
+                    cv.renta_deseada, cv.jornada_deseada, cv.modalidad_deseada
                   FROM cv_perfil cv
                   INNER JOIN usuario u ON cv.rut_persona = u.rut";
 
@@ -68,7 +67,6 @@ class modeloCvPerfil {
         return $lista;
     }
 
-    // =============================================
     // funcion GET BY ID para obtener CV completo por id_cv y la vista completa para administrador
     public function getById(modeloCvPerfil $_cv) {
         $con = new conexion();
@@ -77,7 +75,7 @@ class modeloCvPerfil {
                     cv.nivel_educacional, cv.carrera, cv.renta_deseada,
                     cv.jornada_deseada, cv.modalidad_deseada,
                     u.nombre, u.apellido_paterno, u.apellido_materno,
-                    u.telefono, u.comuna, u.porcentaje_avance
+                    u.telefono, u.comuna
                   FROM cv_perfil cv
                   INNER JOIN usuario u ON cv.rut_persona = u.rut
                   WHERE cv.id_cv = " . $_cv->getId_cv();

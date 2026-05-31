@@ -1,6 +1,6 @@
 <?php
 
-require_once '/../config/conexion.php';
+require_once __DIR__ . '/../config/conexion.php';
 
 class modeloUsuario {
     
@@ -19,7 +19,6 @@ class modeloUsuario {
     public function __construct() {}
 
     // GETTERS Y SETTERS
-
     public function getId_usuario() { return $this->id_usuario; }
     public function setId_usuario($value) { $this->id_usuario = $value; }
 
@@ -60,7 +59,7 @@ class modeloUsuario {
         $query = "SELECT 
                     l.id_usuario, l.correo, l.id_rol, l.id_estado, l.fecha_registro,
                     u.rut, u.nombre, u.apellido_paterno, u.apellido_materno, 
-                    u.telefono, u.comuna, u.porcentaje_avance
+                    u.telefono, u.comuna
                   FROM login_usuario l
                   INNER JOIN usuario u ON l.id_usuario = u.id_usuario";
 
@@ -82,10 +81,10 @@ class modeloUsuario {
         $query = "SELECT 
                     l.id_usuario, l.correo, l.id_rol, l.id_estado, l.fecha_registro,
                     u.rut, u.nombre, u.apellido_paterno, u.apellido_materno,
-                    u.telefono, u.comuna, u.porcentaje_avance
+                    u.telefono, u.comuna
                   FROM login_usuario l
                   INNER JOIN usuario u ON l.id_usuario = u.id_usuario
-                  WHERE l.id_usuario = " . $_usuario->getId_usuario();
+                  WHERE l.id_usuario = " . (int)$_usuario->getId_usuario();
 
         $rs = mysqli_query($con->getConection(), $query);
         $resultado = null;
@@ -103,17 +102,14 @@ class modeloUsuario {
         $con = new conexion();
         $conn = $con->getConection();
 
-        // Hash de la contraseña
         $hash = password_hash($_nuevo->getContrasena(), PASSWORD_BCRYPT);
 
-        // Primero insertamos en login_usuario
+        // Inserción en login_usuario
         $query1 = "INSERT INTO login_usuario (correo, contrasena, id_rol, id_estado) 
                    VALUES (
                        '" . mysqli_real_escape_string($conn, $_nuevo->getCorreo()) . "',
                        '" . $hash . "',
-                       " . $_nuevo->getId_rol() . ",
-                       3
-                   )";
+                       " . (int)$_nuevo->getId_rol() . ",  3 )";
 
         $rs1 = mysqli_query($conn, $query1);
 
@@ -122,14 +118,13 @@ class modeloUsuario {
             return false;
         }
 
-        // Obtenemos el id generado
         $id_nuevo = mysqli_insert_id($conn);
 
-        // Insertamos en usuario
+        // Inserción en usuario (Se usa mysqli_real_escape_string para el RUT si es que viene formateado como string, o se limpia)
         $query2 = "INSERT INTO usuario (rut, id_usuario, nombre, apellido_paterno, apellido_materno, telefono, comuna)
                    VALUES (
-                       " . $_nuevo->getRut() . ",
-                       " . $id_nuevo . ",
+                       '" . mysqli_real_escape_string($conn, $_nuevo->getRut()) . "',
+                       " . (int)$id_nuevo . ",
                        '" . mysqli_real_escape_string($conn, $_nuevo->getNombre()) . "',
                        '" . mysqli_real_escape_string($conn, $_nuevo->getApellido_paterno()) . "',
                        '" . mysqli_real_escape_string($conn, $_nuevo->getApellido_materno()) . "',
@@ -153,7 +148,7 @@ class modeloUsuario {
                     apellido_materno = '" . mysqli_real_escape_string($conn, $_nuevo->getApellido_materno()) . "',
                     telefono = '" . mysqli_real_escape_string($conn, $_nuevo->getTelefono()) . "',
                     comuna = '" . mysqli_real_escape_string($conn, $_nuevo->getComuna()) . "'
-                  WHERE id_usuario = " . $_nuevo->getId_usuario();
+                  WHERE id_usuario = " . (int)$_nuevo->getId_usuario();
 
         $rs = mysqli_query($conn, $query);
         $con->closeConnection();
@@ -167,8 +162,8 @@ class modeloUsuario {
         $conn = $con->getConection();
 
         $query = "UPDATE login_usuario SET
-                    id_estado = " . $_nuevo->getId_estado() . "
-                  WHERE id_usuario = " . $_nuevo->getId_usuario();
+                    id_estado = " . (int)$_nuevo->getId_estado() . "
+                  WHERE id_usuario = " . (int)$_nuevo->getId_usuario();
 
         $rs = mysqli_query($conn, $query);
         $con->closeConnection();
@@ -180,7 +175,7 @@ class modeloUsuario {
     public function delete(modeloUsuario $_nuevo) {
         $con = new conexion();
         $query = "DELETE FROM login_usuario 
-                  WHERE id_usuario = " . $_nuevo->getId_usuario();
+                  WHERE id_usuario = " . (int)$_nuevo->getId_usuario();
 
         $rs = mysqli_query($con->getConection(), $query);
         $con->closeConnection();

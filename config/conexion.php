@@ -3,7 +3,7 @@ class conexion {
     private $connection;
     private $host = '127.0.0.1'; 
     private $port = '3306';
-    private $db = 'db_proviemplea'; // Nombre de la BD del proyecto
+    private $db = 'db_proviemplea'; 
     private $username = 'root';
     private $password = '';
 

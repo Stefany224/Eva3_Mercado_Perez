@@ -1,16 +1,15 @@
 <?php
 
 require_once __DIR__ . '/../config/headers.php';
-require_once  '/../config/conexion.php';
-require_once  '/../Model/modeloSolicitud.php';
+require_once __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/../Model/m_solicitud.php';
+
 
 switch ($_method) {
 
     // metodo GET para obtener solicitudes
-    // ?id_solicitud=X → una solicitud con sus notas
-    // sin parametros  → todas las solicitudes
     case 'GET':
-        if ($_authorization === 'Bearer proviemplea.get') {
+        if ($_authorization === 'proviemplea.get') { // <-- TOKEN LIMPIO AQUÍ
             $modelo = new modeloSolicitud();
 
             if (isset($_GET['id_solicitud'])) {
@@ -36,17 +35,15 @@ switch ($_method) {
         break;
 
     // metodo POST para crear solicitud o agregar nota
-    // ?nota=1 → agrega nota a solicitud existente
-    // sin parametro → crea nueva solicitud
     case 'POST':
-        if ($_authorization === 'Bearer proviemplea.post') {
+        if ($_authorization === 'proviemplea.post') { // <-- TOKEN LIMPIO AQUÍ
             $body = json_decode(file_get_contents("php://input"), true);
 
             // Agregar nota a solicitud existente
             if (isset($_GET['nota'])) {
                 if (
                     empty($body['id_solicitud']) ||
-                    empty($body['autor_rol']) ||
+                    empty($body['autor_rol']) || 
                     empty($body['comentario'])
                 ) {
                     http_response_code(400);
@@ -101,11 +98,8 @@ switch ($_method) {
         break;
 
     // metodo PATCH para actualizar estado del proceso
-    // Estados validos:
-    // 4=Contactado, 5=Entrevista,
-    // 6=Seleccionado, 7=No seleccionado
     case 'PATCH':
-        if ($_authorization === 'Bearer proviemplea.patch') {
+        if ($_authorization === 'proviemplea.patch') { // <-- TOKEN LIMPIO AQUÍ
             $body = json_decode(file_get_contents("php://input"), true);
 
             if (
@@ -117,7 +111,6 @@ switch ($_method) {
                 break;
             }
 
-            // Validar que el estado sea valido para procesos (4 al 7)
             $estados_validos = [4, 5, 6, 7];
             if (!in_array($body['id_estado_proceso'], $estados_validos)) {
                 http_response_code(400);
@@ -145,13 +138,10 @@ switch ($_method) {
         break;
 
     // metodo DELETE para eliminar solicitud o nota
-    // ?nota=1 → elimina nota por id_nota
-    // sin parametro → elimina solicitud completa
     case 'DELETE':
-        if ($_authorization === 'Bearer proviemplea.delete') {
+        if ($_authorization === 'proviemplea.delete') { // <-- TOKEN LIMPIO AQUÍ
             $body = json_decode(file_get_contents("php://input"), true);
 
-            // Eliminar nota especifica
             if (isset($_GET['nota'])) {
                 if (empty($body['id_nota'])) {
                     http_response_code(400);
@@ -174,7 +164,6 @@ switch ($_method) {
                 break;
             }
 
-            // Eliminar solicitud completa
             if (empty($body['id_solicitud'])) {
                 http_response_code(400);
                 echo json_encode(['type' => 'error', 'msg' => 'Falta el id_solicitud']);
