@@ -1,7 +1,4 @@
 <?php
-// =============================================
-// HEADERS Y AUTORIZACIÓN - ProviEmplea
-// =============================================
 
 $_method = $_SERVER['REQUEST_METHOD'];
 $_uri = $_SERVER['REQUEST_URI'];
@@ -13,13 +10,13 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
 header('Access-Control-Allow-Headers: Authorization, Content-Type');
 header('Content-Type: application/json; charset=UTF-8');
 
-// Manejo de preflight OPTIONS (Swagger lo necesita)
+// Manejo de preflight OPTIONS 
 if ($_method === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// Captura del token - compatible con XAMPP
+// Captura del token 
 $_authorization = null;
 
 try {
@@ -33,12 +30,10 @@ try {
         }
     }
 
-    // Intento 2: Variable de servidor (funciona siempre en XAMPP)
     if (empty($_authorization) && isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $_authorization = $_SERVER['HTTP_AUTHORIZATION'];
     }
 
-    // Intento 3: REDIRECT_HTTP_AUTHORIZATION (cuando hay .htaccess)
     if (empty($_authorization) && isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
         $_authorization = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
     }
@@ -48,9 +43,6 @@ try {
         echo json_encode(['type' => 'error', 'msg' => 'Sin Autorizacion']);
         exit;
     }
-
-    // Limpieza del token: saca "Bearer " si viene, deja solo el valor
-    $_authorization = trim(str_replace('Bearer', '', $_authorization));
 
 } catch (Exception $e) {
     http_response_code(500);
