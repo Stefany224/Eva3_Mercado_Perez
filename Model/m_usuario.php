@@ -104,7 +104,7 @@ class modeloUsuario {
 
         $hash = password_hash($_nuevo->getContrasena(), PASSWORD_BCRYPT);
 
-        // Inserción en login_usuario
+        // Insercion en login_usuario
         $query1 = "INSERT INTO login_usuario (correo, contrasena, id_rol, id_estado) 
                    VALUES (
                        '" . mysqli_real_escape_string($conn, $_nuevo->getCorreo()) . "',
@@ -120,7 +120,7 @@ class modeloUsuario {
 
         $id_nuevo = mysqli_insert_id($conn);
 
-        // Inserción en usuario (Se usa mysqli_real_escape_string para el RUT si es que viene formateado como string, o se limpia)
+        // Insercion en usuario (Se usa mysqli_real_escape_string para el RUT si es que viene formateado como string, o se limpia)
         $query2 = "INSERT INTO usuario (rut, id_usuario, nombre, apellido_paterno, apellido_materno, telefono, comuna)
                    VALUES (
                        '" . mysqli_real_escape_string($conn, $_nuevo->getRut()) . "',

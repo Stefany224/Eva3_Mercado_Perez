@@ -1,0 +1,704 @@
+openapi: 3.0.0
+
+info:
+  title: API ProviEmplea
+  version: 1.0.0
+  description: |
+    Documento para probar la API de ProviEmplea.
+    
+    Tokens de autorizacion por metodo:
+    - GET -> proviemplea.get
+    - POST -> proviemplea.post
+    - PUT -> proviemplea.put
+    - PATCH -> proviemplea.patch
+    - DELETE -> proviemplea.delete
+
+servers:
+  - url: http://localhost/ProviEmplea/controllers
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+
+  # USUARIO
+  /c_usuario.php:
+    get:
+      tags: [Usuario]
+      summary: Obtener todos los usuarios o uno por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: id_usuario
+          required: false
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Usuarios obtenidos correctamente
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '404':
+          description: Usuario no encontrado
+
+    post:
+      tags: [Usuario]
+      summary: Crear nuevo usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut:
+                  type: integer
+                  example: 12345678
+                correo:
+                  type: string
+                  example: "juan.perez@correo.cl"
+                contrasena:
+                  type: string
+                  example: "Clave123"
+                id_rol:
+                  type: integer
+                  example: 2
+                nombre:
+                  type: string
+                  example: "Juan"
+                apellido_paterno:
+                  type: string
+                  example: "Perez"
+                apellido_materno:
+                  type: string
+                  example: "Gonzalez"
+                telefono:
+                  type: string
+                  example: "912345678"
+                comuna:
+                  type: string
+                  example: "Providencia"
+      responses:
+        '201':
+          description: Usuario creado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo crear el usuario
+
+    put:
+      tags: [Usuario]
+      summary: Actualizar datos personales del usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 1
+                nombre:
+                  type: string
+                  example: "Juan Editado"
+                apellido_paterno:
+                  type: string
+                  example: "Perez"
+                apellido_materno:
+                  type: string
+                  example: "Gonzalez"
+                telefono:
+                  type: string
+                  example: "988889999"
+                comuna:
+                  type: string
+                  example: "Providencia"
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar el usuario
+
+    patch:
+      tags: [Usuario]
+      summary: Cambiar estado del usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 1
+                id_estado:
+                  type: integer
+                  example: 1
+                  description: "1=Activo, 2=Inactivo, 3=Pendiente"
+      responses:
+        '200':
+          description: Estado actualizado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar el estado
+
+    delete:
+      tags: [Usuario]
+      summary: Eliminar usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Usuario eliminado correctamente
+        '400':
+          description: Falta el id_usuario
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo eliminar el usuario
+
+  # CV PERFIL
+  /c_cvperfil.php:
+    get:
+      tags: [CV Perfil]
+      summary: Obtener CVs
+      description: "Sin params todos en vista ciega. id_cv=X CV completo admin. ciego=X CV ciego empresa."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: id_cv
+          required: false
+          schema:
+            type: integer
+          example: 1
+        - in: query
+          name: ciego
+          required: false
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: CV obtenido correctamente
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '404':
+          description: CV no encontrado
+
+    post:
+      tags: [CV Perfil]
+      summary: Crear CV
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_persona:
+                  type: integer
+                  example: 12345678
+                resumen_laboral:
+                  type: string
+                  example: "Profesional con 5 años de experiencia"
+                nivel_educacional:
+                  type: string
+                  example: "Universitario"
+                carrera:
+                  type: string
+                  example: "Ingenieria en Informatica"
+                renta_deseada:
+                  type: integer
+                  example: 800000
+                jornada_deseada:
+                  type: string
+                  example: "Completa"
+                modalidad_deseada:
+                  type: string
+                  example: "Hibrido"
+      responses:
+        '201':
+          description: CV creado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo crear el CV
+
+    put:
+      tags: [CV Perfil]
+      summary: Actualizar CV completo
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cv:
+                  type: integer
+                  example: 1
+                resumen_laboral:
+                  type: string
+                  example: "Profesional con 6 años de experiencia"
+                nivel_educacional:
+                  type: string
+                  example: "Postgrado"
+                carrera:
+                  type: string
+                  example: "Ingenieria en Informatica"
+                renta_deseada:
+                  type: integer
+                  example: 1200000
+                jornada_deseada:
+                  type: string
+                  example: "Completa"
+                modalidad_deseada:
+                  type: string
+                  example: "Remoto"
+      responses:
+        '200':
+          description: CV actualizado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar el CV
+
+    patch:
+      tags: [CV Perfil]
+      summary: Actualizar solo resumen laboral
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cv:
+                  type: integer
+                  example: 1
+                resumen_laboral:
+                  type: string
+                  example: "Resumen actualizado del perfil"
+      responses:
+        '200':
+          description: Resumen actualizado correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar el resumen
+
+    delete:
+      tags: [CV Perfil]
+      summary: Eliminar CV
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cv:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: CV eliminado correctamente
+        '400':
+          description: Falta el id_cv
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo eliminar el CV
+
+  # EMPRESA
+  /c_empresa.php:
+    get:
+      tags: [Empresa]
+      summary: Obtener todas las empresas o una por rut
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: rut_empresa
+          required: false
+          schema:
+            type: string
+          example: "76123456-7"
+      responses:
+        '200':
+          description: Empresa obtenida correctamente
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '404':
+          description: Empresa no encontrada
+
+    post:
+      tags: [Empresa]
+      summary: Crear empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_empresa:
+                  type: string
+                  example: "76123456-7"
+                correo:
+                  type: string
+                  example: "contacto@empresa.cl"
+                nombre_empresa:
+                  type: string
+                  example: "Tech Solutions SpA"
+                rubro:
+                  type: string
+                  example: "Tecnologia"
+                tipo_empresa:
+                  type: string
+                  example: "Contratacion directa"
+                presentacion:
+                  type: string
+                  example: "Empresa lider en desarrollo de software"
+                beneficios:
+                  type: string
+                  example: "Seguro de salud, trabajo remoto"
+                logo:
+                  type: string
+                  example: "https://empresa.cl/logo.png"
+                nombre_contacto:
+                  type: string
+                  example: "Maria Gonzalez"
+                telefono_contacto:
+                  type: string
+                  example: "222345678"
+      responses:
+        '201':
+          description: Empresa creada correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo crear la empresa
+
+    put:
+      tags: [Empresa]
+      summary: Actualizar datos de empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_empresa:
+                  type: string
+                  example: "76123456-7"
+                nombre_empresa:
+                  type: string
+                  example: "Tech Solutions SpA"
+                rubro:
+                  type: string
+                  example: "Tecnologia"
+                tipo_empresa:
+                  type: string
+                  example: "Contratacion directa"
+                presentacion:
+                  type: string
+                  example: "Empresa actualizada"
+                beneficios:
+                  type: string
+                  example: "Seguro de salud, bono de vacaciones"
+                logo:
+                  type: string
+                  example: "https://empresa.cl/logo-nuevo.png"
+                nombre_contacto:
+                  type: string
+                  example: "Carlos Perez"
+                telefono_contacto:
+                  type: string
+                  example: "222987654"
+      responses:
+        '200':
+          description: Empresa actualizada correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar la empresa
+
+    patch:
+      tags: [Empresa]
+      summary: Actualizar solo presentacion de empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_empresa:
+                  type: string
+                  example: "76123456-7"
+                presentacion:
+                  type: string
+                  example: "Nueva presentacion de la empresa"
+      responses:
+        '200':
+          description: Presentacion actualizada correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar la presentacion
+
+    delete:
+      tags: [Empresa]
+      summary: Eliminar empresa
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_empresa:
+                  type: string
+                  example: "76123456-7"
+      responses:
+        '200':
+          description: Empresa eliminada correctamente
+        '400':
+          description: Falta el rut_empresa
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo eliminar la empresa
+
+  # SOLICITUD DE CONTACTO
+  /c_solicitud.php:
+    get:
+      tags: [Solicitud de Contacto]
+      summary: Obtener todas las solicitudes o una por id
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: id_solicitud
+          required: false
+          schema:
+            type: integer
+          example: 1
+      responses:
+        '200':
+          description: Solicitud obtenida correctamente
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '404':
+          description: Solicitud no encontrada
+
+    post:
+      tags: [Solicitud de Contacto]
+      summary: Crear solicitud o agregar nota
+      description: "Sin ?nota=1: crea solicitud. Con ?nota=1: agrega nota a solicitud existente."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: nota
+          required: false
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rut_empresa:
+                  type: string
+                  example: "76123456-7"
+                id_cv:
+                  type: integer
+                  example: 1
+                id_solicitud:
+                  type: integer
+                  example: 1
+                autor_rol:
+                  type: string
+                  example: "administrador"
+                comentario:
+                  type: string
+                  example: "Candidato apto para siguiente etapa"
+      responses:
+        '201':
+          description: Solicitud o nota creada correctamente
+        '400':
+          description: Faltan campos requeridos
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo crear
+
+    patch:
+      tags: [Solicitud de Contacto]
+      summary: Actualizar estado del proceso
+      description: "Estados validos: 4=Contactado, 5=Entrevista, 6=Seleccionado, 7=No seleccionado"
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_solicitud:
+                  type: integer
+                  example: 1
+                id_estado_proceso:
+                  type: integer
+                  example: 5
+      responses:
+        '200':
+          description: Estado actualizado correctamente
+        '400':
+          description: Faltan campos requeridos o estado no valido
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo actualizar el estado
+
+    delete:
+      tags: [Solicitud de Contacto]
+      summary: Eliminar solicitud o nota
+      description: "Sin nota=1: elimina solicitud. Con nota=1: elimina nota por id_nota."
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: nota
+          required: false
+          schema:
+            type: integer
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_solicitud:
+                  type: integer
+                  example: 1
+                id_nota:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Solicitud o nota eliminada correctamente
+        '400':
+          description: Falta id requerido
+        '401':
+          description: Sin autorizacion
+        '403':
+          description: Acceso prohibido
+        '422':
+          description: No se pudo eliminar
